@@ -1,0 +1,128 @@
+// Change the prefix of all classes here
+$prefix: _;
+
+// Spacings are padding
+$spacings: (
+    2,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    40
+);
+
+$xpositions: (
+    t: flex-start, 
+    c: center,
+    b: flex-end 
+);
+
+$ypositions: (
+    l: flex-start, 
+    c: center,
+    r: flex-end
+);
+
+$directions: (
+    row: row, 
+    col: column
+);
+
+
+
+// Generate the classes for the hosting autolayout component
+// Example: _p-row-tl-m20
+// >>> row: position the children in line
+// >>> tl: align children to top/left
+// >>> m20: margin of 20px between each children
+
+@mixin positions {
+    @each $d,$direction in $directions {
+        .#{$prefix}p-#{$d} {
+            @each $xp, $xposition in $xpositions {
+                &-#{$xp} {
+                    @each $yp, $yposition in $ypositions {
+                        &#{$yp} {
+                            @each $spacing in $spacings {
+                                &-m#{$spacing} {
+                                    display: flex;
+                                    flex-direction: $direction;
+                                    justify-content: $yposition;
+                                    align-items: $xposition;
+                                    >* {
+                                        @if $d == 'col' {
+                                            margin-bottom: $spacing + px;
+                                            &:last-child{
+                                                margin-bottom: 0;
+                                            }
+                                        }
+                                        @else {
+                                            margin-right: $spacing + px;
+                                            &:last-child{
+                                                margin-right: 0;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+
+// The 2 classes: width stretch and height stretch
+// By default the children will hug its content
+// _ws _hf
+
+.#{$prefix}ws{
+    flex: none;
+    align-self: stretch;
+}
+
+.#{$prefix}hs{
+    flex: none;
+    flex-grow: 1;
+}
+
+
+
+// OPTIONAL - you might already have a similar property if you use a CSS framework
+// Generate classes for padding-x 
+// Example: _x12 
+// >>> padding-x of 12px
+
+@mixin xpaddings {
+    @each $spacing in $spacings {
+        .#{$prefix}x#{$spacing} {
+            padding-top: $spacing + px;
+            padding-bottom: $spacing + px;
+        }
+    }
+};
+
+// OPTIONAL - you might already have a similar property if you use a CSS framework
+// Generate classes for padding-y 
+// Example: _y12 
+// >>> padding-y of 12px
+
+@mixin ypaddings {
+    @each $spacing in $spacings {
+        .#{$prefix}y#{$spacing} {
+            padding-left: $spacing + px;
+            padding-right: $spacing + px;
+        }
+    }
+};
+
+
+
+@include positions;
+@include xpaddings;
+@include ypaddings;
+
